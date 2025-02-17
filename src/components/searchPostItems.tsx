@@ -9,8 +9,10 @@ interface interSearPostIt {
   comSetLines: React.Dispatch<React.SetStateAction<Array<itemForList>>>;
   comSetlastLinesLengt: React.Dispatch<React.SetStateAction<number>>;
   comSetScrLoad: React.Dispatch<React.SetStateAction<boolean>>;
-  comShowSele: boolean
+  comShowSele: boolean;
   comSetShowSele: React.Dispatch<React.SetStateAction<boolean>>;
+  comNumbORstrFind: boolean;
+  comSetNumbORstrFind: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchPostItems: React.FC<interSearPostIt> = ({
@@ -22,6 +24,8 @@ const SearchPostItems: React.FC<interSearPostIt> = ({
   comSetScrLoad,
   comShowSele,
   comSetShowSele,
+  comNumbORstrFind,
+  comSetNumbORstrFind,
 }) => {
   const resPostSearch = async () => {
     try {
@@ -30,7 +34,11 @@ const SearchPostItems: React.FC<interSearPostIt> = ({
         headers: {
           "Content-Type": "application/json;charset=utf-8",
         }, 
-        body: JSON.stringify({ message: comSearchTerm, messageShow: comShowSele }),
+        body: JSON.stringify({ 
+          message: comSearchTerm, 
+          messageShow: comShowSele,
+          messageNumbORStr: comNumbORstrFind
+        }),
       });
       const data = await response.json();
       comSetLines(data);
@@ -48,7 +56,7 @@ const SearchPostItems: React.FC<interSearPostIt> = ({
     <div>
       <input
         type="text"
-        placeholder="Поиск по содержимому"
+        placeholder={comNumbORstrFind?"поиск по содержимому":"поиск по номеру"}
         value={comSearchTerm}
         onChange={comHandleSearch}
       />
@@ -65,12 +73,19 @@ const SearchPostItems: React.FC<interSearPostIt> = ({
       />
       <input
         type="button"
+        disabled={!comNumbORstrFind}
         value={comShowSele?"Отмеченные":"Не отмеченные"}
         onClick={() => { 
           let turmShow = !comShowSele; 
           comSetShowSele(turmShow);
         }}
       />
+      <p></p>
+      <label>
+      <input type="checkbox" onClick={()=>
+      comSetNumbORstrFind(!comNumbORstrFind) }/>
+        {comNumbORstrFind?"поиск по содержимому":"поиск по номеру"} 
+      </label>
     </div>
   );
 };

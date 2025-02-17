@@ -19,36 +19,46 @@ function App() {
   const [searchTerm, setSearchTerm] = useState<string>(""); //значение поиска
   const [lastLinesLength, setlastLinesLength] = useState<number>(0);
   const [showSele, setShowSele] = useState<boolean>(false);
+  const [numbORstrFind, setnumbORstrFind] = useState<boolean>(true); 
 
   useScrollInfinite(() => {
     setScrLoad(true);
   });
 
-  useEffect(() => {
-    const addLine = async () => {
-      try {
-        console.log(lines.length, lastLinesLength);
+  const addLine = async () => {
+    try {
+      console.log(lines.length, lastLinesLength);
 
-        const response = await fetch("http://103.137.251.210:801", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            message: lines.length,
-            messageTurn: searchTerm,
-            messageShow: showSele,
-          }),
-        });
-        const data: any = await response.json();
-        setLines([...lines, ...data.mess]);
-        setScrLoad(false);
-        setlastLinesLength(data.mess1);
-      } catch (err) {
-        setCatchErr(true);
-        console.log(err);
-      }
-    };
+      const response = await fetch("http://103.137.251.210:801", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          message: lines.length,
+          messageTurn: searchTerm,
+          messageShow: showSele,
+        }),
+      });
+      const data: any = await response.json();
+      setLines([...lines, ...data.mess]);
+      setScrLoad(false);
+      setlastLinesLength(data.mess1);
+    } catch (err) {
+      setCatchErr(true);
+      console.log(err);
+    }
+  };
+  
+
+  useEffect(() => {
+    if(searchTerm.length===0&&scrLoad===false&&
+      window.innerHeight>document.body.clientHeight&&!showSele){
+      addLine();
+    }
+  }, [lines])
+
+  useEffect(() => {
     if (scrLoad) addLine();
   }, [scrLoad, showSele]); // делаем запросы на подгрузку данных
 
@@ -83,7 +93,6 @@ function App() {
       },
       body: JSON.stringify({message: {activeId: active.id, overId: over.id}}),
     });
-    console.log(0, lines);
   };
 
   return (
@@ -103,6 +112,8 @@ function App() {
             comSetScrLoad={setScrLoad}
             comShowSele={showSele}
             comSetShowSele={setShowSele}
+            comNumbORstrFind={numbORstrFind}
+            comSetNumbORstrFind={setnumbORstrFind}
           />
           <p></p>
           <DndContext

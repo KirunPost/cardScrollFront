@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 
 export function useScrollInfinite(callback: () => void) {
+
     useEffect(() => {
         const windowScroll = () => {
-            if ((window.pageYOffset + window.innerHeight ) === document.body.clientHeight) {
+            if ((window.pageYOffset + window.innerHeight + 100) >= document.body.clientHeight) {
                 callback();
             }
         };
