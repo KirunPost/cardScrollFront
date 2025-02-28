@@ -50,9 +50,11 @@ function App() {
     }
   };
   
-
   useEffect(() => {
-    if(searchTerm.length===0&&scrLoad===false&&
+    console.log(showSele,window.innerHeight,document.body.clientHeight,scrLoad,
+      searchTerm.length
+    )
+    if(scrLoad===false&&
       window.innerHeight>document.body.clientHeight&&!showSele){
       addLine();
     }
